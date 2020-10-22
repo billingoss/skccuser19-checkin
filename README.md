@@ -574,7 +574,7 @@ http POST http://gateway:8080/checkIns smokingAreaId=5001  #checkIn 서비스에
 
 * Istio 모니터링 툴을 설치하고 istio를 enable 설정한 다음 deploy를 배포하여 각 pod들이side-car pattern으로 생성되어 있는 것을 확인
 
-https://user-images.githubusercontent.com/61965188/96833449-6b613e00-147b-11eb-8b0b-e445aa03324b.jpg
+![image](https://user-images.githubusercontent.com/61965188/96833449-6b613e00-147b-11eb-8b0b-e445aa03324b.jpg)
 
 
 ## Kiali
