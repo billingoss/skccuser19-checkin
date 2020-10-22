@@ -561,6 +561,28 @@ http POST http://checkIn:8080/checkIns smokingAreaId=5001  #checkIn 서비스에
 http POST http://gateway:8080/checkIns smokingAreaId=5001  #checkIn 서비스에 gateway를 통해 진입(결과값 같음)
 ```
 
+# 클라우드 환경에서의 http 명령어를 통한 동작 확인
+1. checkin (동기방식)
+![image](https://user-images.githubusercontent.com/61965188/96836877-8e422100-1480-11eb-8d78-121af611b07e.jpg)
+
+2. checkin 에 따른 area 생성확인 (상태 :USE)
+![image](https://user-images.githubusercontent.com/61965188/96836893-939f6b80-1480-11eb-8ea1-75513f3c0b5d.jpg)
+
+3. CQRS 에 arealist 내역 확인
+![image](https://user-images.githubusercontent.com/61965188/96836902-97cb8900-1480-11eb-9def-861db454d8e4.jpg)
+
+4. checkouted 수행(비동기 방식, SAGA) 
+![image](https://user-images.githubusercontent.com/61965188/96836921-9c903d00-1480-11eb-9a1e-6fae80c0fa56.jpg)
+
+5. checkout 에 따른 area 변경확인 (상태 :VACANT)
+![image](https://user-images.githubusercontent.com/61965188/96836952-a619a500-1480-11eb-9e73-d58998e73574.jpg)
+
+6. checkout 에 따른 checkin 상태 변경확인(SAGA) (상태 :SUCCESS) 
+![image](https://user-images.githubusercontent.com/61965188/96836977-ab76ef80-1480-11eb-98c3-12213f5d8521.jpg)
+
+
+
+
 # 운영
 
 ### 오토스케일 아웃
