@@ -61,7 +61,7 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
 
 
 ## Event Storming 결과
-* MSAEz 로 모델링한 이벤트스토밍 결과:  http://msaez.io/#/storming/NKu6RyTxjDZBlSnRA2xgoXAphfg2/every/44391e4f53204efe076529c44cb915c9/-MK0SWJ4qc6v-uT0lv2E
+* MSAEz 로 모델링한 이벤트스토밍 결과:  http://www.msaez.io/#/storming/9ClIIvT5hZUzaMQIL3q96ps98iJ2/every/a85337ed8fc34a9f060b32f77e7d16cc/-MKAD1p39nqu1DmG16y9
 
 
 ### 이벤트 도출
@@ -86,7 +86,7 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
 ![image](https://user-images.githubusercontent.com/70302884/96575104-4bab0800-130b-11eb-9d9c-dde7958dd0db.png)
 
     - 도메인 서열 분리
-        - Core Domain:  checkIn : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
+        - Core Domain:  checkIn, Area : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
         - Supporting Domain:   point, pay : 경쟁력을 내기위한 서비스이며, SLA 수준은 연간 60% 이상 uptime 목표, 배포주기는 각 팀의 자율이나 표준 스프린트 주기가 1주일 이므로 1주일 1회 이상을 기준으로 함.
         - General Domain:   지도서비스 : Google Maps 등 3rd Party 외부 서비스를 사용하는 것이 경쟁력이 높음 (핑크색으로 이후 전환할 예정)
 
@@ -109,13 +109,9 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
 ![image](https://user-images.githubusercontent.com/70302884/96577104-1d7af780-130e-11eb-8f92-7b8aa5b9a1da.png)
 
     - 고객이 흡연구역에서 체크인 한다. (ok)
+    - 체크인하면 흡연구역이 사용중으로 변경된다. (ok)
     - 고객이 흡연구역에서 체크아웃 한다. (ok)
-    - 체크아웃 되면 포인트를 적립한다. (ok)
-
-![image](https://user-images.githubusercontent.com/70302884/96577425-937f5e80-130e-11eb-955f-a3da4136dca7.png)
-    
-    - 고객이 포인트를 사용한다. (ok)
-    - 포인트가 사용되면 포인트에서 차감한다. (ok) 
+    - 체크아웃 되면 흡연구역이 비었음으로 변경하고, 체크인 정보의 상태를 성공으로 변경다. (ok)
 
 
 ### 모델 확인
@@ -149,17 +145,18 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트와 JPA으로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
 
 ```
-cd checkIn
+cd skccuser19-checkIn
 mvn spring-boot:run
 
-cd point
+cd skccuser19-point
 mvn spring-boot:run 
 
-cd pay
+cd skccuser19-pay
 mvn spring-boot:run  
 
-cd customercenter
-python policy-handler.py 
+cd skccuser19-area
+mvn spring-boot:run  
+
 ```
 
 ## DDD 의 적용
@@ -167,7 +164,7 @@ python policy-handler.py
 - 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (예시는 point 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 계속 사용할 방법은 아닌것 같다. (Maven pom.xml, Kafka의 topic id, FeignClient 의 서비스 id 등은 한글로 식별자를 사용하는 경우 오류가 발생하는 것을 확인하였다)
 
 ```
-package nosmoke;
+package nosmokeaaa;
 
 import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
@@ -257,9 +254,9 @@ http http://localhost:8082/earns/1
 checkIn 서비스에서 체크아웃 후 point 서비스에서 포인트적립을 Eventual Consistency 방식으로 처리했기 때문에 point 서비스에서 포인트 적립 처리가 완료되면 checkIn 서비스의 상태를 "EARNED"로 업데이트 시켜주는 SAGA 패턴을 적용하였다. 이 기능 역시 비동기 방식으로 checkIn의 PolicyHandler에 처리되도록 구현하였다.
 
 ```
-package nosmoke;
+package nosmokeaaa;
 
-import nosmoke.config.kafka.KafkaProcessor;
+import nosmokeaaa.config.kafka.KafkaProcessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -270,42 +267,61 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class PolicyHandler{
+public class PolicyHandler
+{
     @StreamListener(KafkaProcessor.INPUT)
     public void onStringEventListener(@Payload String eventString){
 
     }
 
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverEarned_UpdatePoint(@Payload Earned earned)
+    {
+
+        if(earned.isMe()){
+            System.out.println("##### listener UpdatePoint : " + earned.toJson());
+        }
+    }
+
+
     @Autowired
     CheckInRepository checkInRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverEarned_UpdatePoint(@Payload Earned earned){
+    public void wheneverEmptied_UpdateStatus(@Payload Emptied emptied)
+    {
 
-
-        if(earned.isMe()){
-
-            Optional<CheckIn> checkInOptional = checkInRepository.findById(earned.getCheckInId());
+        if(emptied.isMe())
+        {
+            System.out.println("##### LLLLL88 UpdatePoint : " + emptied.toJson());
+            Optional<CheckIn> checkInOptional = checkInRepository.findById(emptied.getId());
             CheckIn checkIn = checkInOptional.get();
-            checkIn.setPoint(earned.getPoint());
-            checkIn.setSmokingAreaId(checkIn.getSmokingAreaId());
-            checkIn.setStatus("EARNED");
-
+            checkIn.setStatus("SUCCESS");
             checkInRepository.save(checkIn);
         }
     }
+
+
+
 
 }
 
 ```
 
+
+## 폴리글랏
+ micro serviced 별로 적합한 DB를 적용하였습니다.
+
+## 유비쿼터스 랭기지
+ 일반적으로 이해 가능한 영어단어를 사용하였습니다. ( checkin, area, point 등) 
+
 ## CQRS
 
-고객관리 서비스(customercenter)의 시나리오인 체크인/포인트적립, 포인트결제에 따른 포인트차감 내역을 CQRS로 구현하었고 코드는 다음과 같다:
+고객관리 서비스(customercenter)의 시나리오인 체크인/아웃에 따른 흡연구역상태(USE/VACANT) 내역 확인을 CQRS로 구현하었고 코드는 다음과 같다:
 ```
-package nosmoke;
+package nosmokeaaa;
 
-import nosmoke.config.kafka.KafkaProcessor;
+import nosmokeaaa.config.kafka.KafkaProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -316,39 +332,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MypageViewHandler {
+public class AreaListViewHandler {
 
 
     @Autowired
-    private MypageRepository mypageRepository;
+    private AreaListRepository areaListRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenCheckIned_then_CREATE_1 (@Payload CheckIned checkIned) {
+    public void whenOccupied_then_CREATE_1 (@Payload Occupied occupied) {
         try {
-            if (checkIned.isMe()) {
+            if (occupied.isMe()) {
                 // view 객체 생성
-                Mypage mypage = new Mypage();
+                AreaList areaList = new AreaList();
                 // view 객체에 이벤트의 Value 를 set 함
-                mypage.setCheckInId(checkIned.getId());
-                mypage.setSmokingAreaId(checkIned.getSmokingAreaId());
+                areaList.setId(occupied.getAreaId());
+                areaList.setStatus(occupied.getStatus());
                 // view 레파지 토리에 save
-                mypageRepository.save(mypage);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whenPaid_then_CREATE_2 (@Payload Paid paid) {
-        try {
-            if (paid.isMe()) {
-                // view 객체 생성
-                Mypage mypage = new Mypage();
-                // view 객체에 이벤트의 Value 를 set 함
-                mypage.setDeductId(paid.getId());
-                mypage.setPoint(paid.getPoint());
-                // view 레파지 토리에 save
-                mypageRepository.save(mypage);
+                areaListRepository.save(areaList);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -357,17 +357,19 @@ public class MypageViewHandler {
 
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenEarned_then_UPDATE_1(@Payload Earned earned) {
+    public void whenEmptied_then_UPDATE_1(@Payload Emptied emptied) {
         try {
-            if (earned.isMe()) {
+            if (emptied.isMe())
+            {
                 // view 객체 조회
-                List<Mypage> mypageList = mypageRepository.findByCheckInId(earned.getCheckInId());
-                for(Mypage mypage : mypageList){
+                Optional<AreaList> areaListOptional = areaListRepository.findById(emptied.getId());
+                if( areaListOptional.isPresent())
+                {
+                    AreaList areaList = areaListOptional.get();
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    mypage.setEarnId(earned.getId());
-                    mypage.setPoint(earned.getPoint());
+                    areaList.setStatus(emptied.getStatus());
                     // view 레파지 토리에 save
-                    mypageRepository.save(mypage);
+                    areaListRepository.save(areaList);
                 }
             }
         }catch (Exception e){
@@ -532,7 +534,11 @@ spring:
         - id: customercenter
           uri: http://customercenter:8080
           predicates:
-            - Path= /mypages/**
+            - Path= /mypages/**,/areaLists/**
+        - id: area
+          uri: http://area:8080
+          predicates:
+            - Path=/areas/** 
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -551,9 +557,8 @@ server:
 gateway를 통한 진입점 통일 테스트
 
 ```
-http http://point:8080/earns/1  #point 서비스에 직접 진입
-
-http http://gateway:8080/earns/1  #point 서비스에 gateway를 통해 진입(결과값 같음)
+http POST http://checkIn:8080/checkIns smokingAreaId=5001  #checkIn 서비스에 직접 진입
+http POST http://gateway:8080/checkIns smokingAreaId=5001  #checkIn 서비스에 gateway를 통해 진입(결과값 같음)
 ```
 
 # 운영
@@ -584,6 +589,11 @@ http http://gateway:8080/earns/1  #point 서비스에 gateway를 통해 진입(�
 * Tracing Server - Jaeger를 적용하였다. 아래는 18:20 이전 gateway로 동기 호출된 결과에 대해 Trace 결과를 보여주고 있음을 확인 
 
 ![image](https://user-images.githubusercontent.com/16397080/96666714-ab002b00-1392-11eb-985a-7f643570ce99.png)
+
+
+## Circuit Breaker
+
+* DestinationRule 설정 후 siege 를 통해 부하를 준다
 
 
 
