@@ -247,7 +247,7 @@ http http://localhost:8082/earns/1
 
 ## Saga
 
-checkIn 서비스에서 체크아웃 후 point 서비스에서 포인트적립을 Eventual Consistency 방식으로 처리했기 때문에 point 서비스에서 포인트 적립 처리가 완료되면 checkIn 서비스의 상태를 "EARNED"로 업데이트 시켜주는 SAGA 패턴을 적용하였다. 이 기능 역시 비동기 방식으로 checkIn의 PolicyHandler에 처리되도록 구현하였다.
+checkIn 서비스에서 체크아웃 후 area 서비스에서 흡연구역 상태 변경을 Eventual Consistency 방식으로 처리했기 때문에 area 서비스에서 상태변경 처리가 완료되면 checkIn 서비스의 상태를 "SUCCESS"로 업데이트 시켜주는 SAGA 패턴을 적용하였다. 이 기능 역시 비동기 방식으로 checkIn의 PolicyHandler에 처리되도록 구현하였다.
 
 ```
 package nosmokeaaa;
