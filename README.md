@@ -23,6 +23,7 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
     - [Istio 적용](#Istio 적용)
     - [Kiali](#Kiali)
     - [Jaeger](#Jaeger)
+    - [Circuit Breaker](#Destination Rule)
 
 # 서비스 시나리오
 
