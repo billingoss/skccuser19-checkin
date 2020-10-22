@@ -100,13 +100,13 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
 
 ### 완성된 1차 모형
 
-![image](https://user-images.githubusercontent.com/70302884/96576148-b4df4b00-130c-11eb-859b-b7bd7a8648cd.png)
+![image](https://user-images.githubusercontent.com/61965188/96833654-c72bc700-147b-11eb-98c8-69bea84b740d.jpg)
 
-    - View Model 추가
+    - Area, View Model 추가
 
 ### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 
-![image](https://user-images.githubusercontent.com/70302884/96577104-1d7af780-130e-11eb-8f92-7b8aa5b9a1da.png)
+![image](https://user-images.githubusercontent.com/61965188/96833674-cc891180-147b-11eb-9a85-a13a112ad178.jpg)
 
     - 고객이 흡연구역에서 체크인 한다. (ok)
     - 체크인하면 흡연구역이 사용중으로 변경된다. (ok)
@@ -114,15 +114,10 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
     - 체크아웃 되면 흡연구역이 비었음으로 변경하고, 체크인 정보의 상태를 성공으로 변경다. (ok)
 
 
-### 모델 확인
-
-![image](https://user-images.githubusercontent.com/70302884/96577613-d2adaf80-130e-11eb-913b-6562d629f177.png)
-    
-    - 수정된 모델은 모든 요구사항을 커버함.
 
 ### 비기능 요구사항에 대한 검증
 
-![image](https://user-images.githubusercontent.com/70302884/96577805-2b7d4800-130f-11eb-8408-24367b62315c.png)
+![image](https://user-images.githubusercontent.com/61965188/96833674-cc891180-147b-11eb-9a85-a13a112ad178.jpg)
 
     - 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
     - 포인트 결제 처리: 포인트 차감이 완료되지 않으면 결제가 이루어지지 않아야 함.(ACID 트랜잭션 적용) 포인트 결제는 Request-Response 방식 처리
@@ -311,6 +306,10 @@ public class PolicyHandler
 
 ## 폴리글랏
  micro serviced 별로 적합한 DB를 적용하였습니다.
+
+![image](https://user-images.githubusercontent.com/61965188/96833506-8469ef00-147b-11eb-8975-f250309b113c.jpg)
+![image](https://user-images.githubusercontent.com/61965188/96833512-892ea300-147b-11eb-9fdb-1c54bec85f44.jpg)
+
 
 ## 유비쿼터스 랭기지
  일반적으로 이해 가능한 영어단어를 사용하였습니다. ( checkin, area, point 등) 
@@ -565,9 +564,9 @@ http POST http://gateway:8080/checkIns smokingAreaId=5001  #checkIn 서비스에
 
 ### 오토스케일 아웃
 
-* kubectl autoscale deploy pay --min1 --max=10 --cpu-percent=15 -n tutorial로 오토스케일 설정을 완료하여 아래에서 설정된 것을 확인
+* 오토스케일 설정을 완료하여 아래에서 설정된 것을 확인
 
-![image](https://user-images.githubusercontent.com/16397080/96666748-bce1ce00-1392-11eb-8cc9-9e4745e344c0.png)
+![image](https://user-images.githubusercontent.com/61965188/96833527-921f7480-147b-11eb-8378-14eaf7c46d92.jpg)
 
 
 ## Istio 적용
@@ -579,21 +578,23 @@ http POST http://gateway:8080/checkIns smokingAreaId=5001  #checkIn 서비스에
 
 ## Kiali
 
-* Monitoring Server - Kiali를 적용하였다. 아래는 18:19부터 1분간 호출된 서비스에 대해 Graph 형식으로 보여지는 모니터링 결과를 확인
+* Monitoring Server - Kiali를 적용하였다.  Graph 형식으로 보여지는 모니터링 결과를 확인
 
-![image](https://user-images.githubusercontent.com/16397080/96666770-c53a0900-1392-11eb-80bf-0248fa7cba76.png)
+![image](https://user-images.githubusercontent.com/61965188/96833462-71571f00-147b-11eb-8568-ac6b955fe646.jpg)
 
 
 ## Jaeger
 
-* Tracing Server - Jaeger를 적용하였다. 아래는 18:20 이전 gateway로 동기 호출된 결과에 대해 Trace 결과를 보여주고 있음을 확인 
+* Tracing Server - Jaeger를 적용하였다.  gateway로 동기 호출된 결과에 대해 Trace 결과를 보여주고 있음을 확인 
 
-![image](https://user-images.githubusercontent.com/16397080/96666714-ab002b00-1392-11eb-985a-7f643570ce99.png)
+![image](https://user-images.githubusercontent.com/61965188/96833476-76b46980-147b-11eb-8d9f-c96a62502bca.jpg)
 
 
 ## Circuit Breaker
 
 * DestinationRule 설정 후 siege 를 통해 부하를 준다
 
+![image](https://user-images.githubusercontent.com/61965188/96833489-7caa4a80-147b-11eb-93d7-c62453f16aee.jpg)
+![image](https://user-images.githubusercontent.com/61965188/96833567-a1062700-147b-11eb-83b1-353aeb2ff721.jpg)
 
 
